@@ -1,14 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Gateway;
+using Discord.WebSocket;
 using Atom.Utils;
 
 namespace Atom.Services.Tools
 {
     public static class DiscordTokenStatusService
     {
-        private static DiscordClient? _client;
+        private static DiscordSocketClient? _client;
 
         public static async Task HandleTokenStatusMenu()
         {
@@ -60,28 +61,26 @@ namespace Atom.Services.Tools
         {
             try
             {
-                _client = new DiscordClient(token);
-
-                _client.OnLoggedIn += (sender, e) =>
+                var config = new DiscordSocketConfig
                 {
-                    UIHelper.PrintSuccess($"Connecté sur le compte : {e.User.Username}#{e.User.Discriminator}");
+                    GatewayIntents = GatewayIntents.None,
+                    LogLevel = LogSeverity.Error
                 };
 
-                _client.Connect();
+                _client = new DiscordSocketClient(config);
 
-                // On attend un peu que la connexion soit établie
-                await Task.Delay(2000);
-
-                var activity = new Activity
+                _client.Ready += async () =>
                 {
-                    Name = text,
-                    Type = type,
-                    Url = url
+                    UIHelper.PrintSuccess($"Connecté sur le compte : {_client.CurrentUser.Username}");
+                    await _client.SetGameAsync(text, url, type);
+                    UIHelper.PrintSuccess($"Statut '{text}' activé !");
                 };
 
-                _client.User.SetActivity(activity);
-                
-                UIHelper.PrintSuccess($"Statut '{text}' activé !");
+                // Note: Discord.Net does not officially support user tokens (self-bots).
+                // This might work with some user tokens but is against Discord TOS.
+                await _client.LoginAsync(TokenType.Bot, token); 
+                await _client.StartAsync();
+
                 UIHelper.PrintInfo("Note: Le statut restera actif tant qu'ATOM est ouvert.");
             }
             catch (Exception ex)
@@ -95,7 +94,9 @@ namespace Atom.Services.Tools
         {
             if (_client != null)
             {
-                _client.Logout();
+                await _client.StopAsync();
+                await _client.LogoutAsync();
+                _client.Dispose();
                 _client = null;
                 UIHelper.PrintSuccess("Session Token arrêtée.");
             }
@@ -103,7 +104,6 @@ namespace Atom.Services.Tools
             {
                 UIHelper.PrintInfo("Aucune session active.");
             }
-            await Task.CompletedTask;
         }
     }
 }
