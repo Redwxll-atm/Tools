@@ -22,6 +22,7 @@ namespace Atom
                 "Proxy Tools", 
                 "System & Security Tools", 
                 "Network & Utility Tools",
+                "Obfuscation Tools",
                 "Quitter" 
             };
             
@@ -62,6 +63,9 @@ namespace Atom
                         break;
                     case 4:
                         await HandleUtilityMenu();
+                        break;
+                    case 5:
+                        ObfuscationService.HandleObfuscationMenu();
                         break;
                 }
             }
