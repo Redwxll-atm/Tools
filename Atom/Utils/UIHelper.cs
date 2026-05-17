@@ -28,14 +28,16 @@ namespace Atom.Utils
 
                         if (i == currentSelection)
                         {
-                            Console.BackgroundColor = ConsoleColor.Blue;
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.WriteLine($"> {options[i]} <");
+                            Console.BackgroundColor = ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.WriteLine($">> {options[i]} <<");
                             Console.ResetColor();
                         }
                         else
                         {
-                            Console.WriteLine($"  {options[i]}  ");
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine($"   {options[i]}   ");
+                            Console.ResetColor();
                         }
                     }
 
@@ -60,7 +62,39 @@ namespace Atom.Utils
                 }
             }
 
+            Console.ResetColor();
             return currentSelection;
+        }
+
+        public static void DisplayHeader()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(@"
+      █████╗ ████████╗ ██████╗ ███╗   ███╗
+     ██╔══██╗╚══██╔══╝██╔═══██╗████╗ ████║
+     ███████║   ██║   ██║   ██║██╔████╔██║
+     ██╔══██║   ██║   ██║   ██║██║╚██╔╝██║
+     ██║  ██║   ██║   ╚██████╔╝██║ ╚═╝ ██║
+     ╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝
+            ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("        [ THE ULTIMATE MULTI-TOOL ]");
+            Console.WriteLine(" ___________________________________________\n");
+            Console.ResetColor();
+        }
+
+        public static void TransitionEffect()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("\nChargement");
+            for (int i = 0; i < 3; i++)
+            {
+                Thread.Sleep(200);
+                Console.Write(".");
+            }
+            Console.ResetColor();
+            Console.Clear();
         }
     }
 }

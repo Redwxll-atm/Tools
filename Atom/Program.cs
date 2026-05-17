@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 using Atom.Services;
 using Atom.Services.Tools;
 using Atom.Utils;
@@ -23,16 +24,14 @@ namespace Atom
             
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("=== ATOM MULTI-TOOL ===");
-                Console.WriteLine("Utilisez les FLECHES pour naviguer, ENTREE pour valider.\n");
+                UIHelper.DisplayHeader();
                 
                 int selectedIndex = UIHelper.SingleChoice(mainOptions);
 
                 if (mainOptions[selectedIndex] == "Quitter")
                     break;
 
-                Console.Clear();
+                UIHelper.TransitionEffect();
                 switch (selectedIndex)
                 {
                     case 0:
@@ -56,6 +55,7 @@ namespace Atom
 
         static async Task HandleDiscordMenu()
         {
+            UIHelper.DisplayHeader();
             var options = new List<string> 
             { 
                 "Webhook Tools (Check/Delete/Send)", 
@@ -65,7 +65,7 @@ namespace Atom
                 "Retour" 
             };
             int choice = UIHelper.SingleChoice(options);
-            Console.Clear();
+            UIHelper.TransitionEffect();
             switch (choice)
             {
                 case 0: await WebhookService.HandleWebhookMenu(); break;
@@ -77,6 +77,7 @@ namespace Atom
 
         static async Task HandleTokenMenu()
         {
+            UIHelper.DisplayHeader();
             var options = new List<string> 
             { 
                 "Token Checker/Info", 
@@ -90,7 +91,7 @@ namespace Atom
                 "Retour" 
             };
             int choice = UIHelper.SingleChoice(options);
-            Console.Clear();
+            UIHelper.TransitionEffect();
             switch (choice)
             {
                 case 0: await TokenService.HandleTokenInfo(); break;
@@ -107,9 +108,10 @@ namespace Atom
 
         static async Task HandleProxyMenu()
         {
+            UIHelper.DisplayHeader();
             var options = new List<string> { "Proxy Scraper", "Proxy Checker", "Retour" };
             int choice = UIHelper.SingleChoice(options);
-            Console.Clear();
+            UIHelper.TransitionEffect();
             if (choice == 0) await ProxyService.HandleProxyScraper();
             else if (choice == 1) await ProxyService.HandleProxyChecker();
             if (choice != 2) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
@@ -117,6 +119,7 @@ namespace Atom
 
         static async Task HandleSystemMenu()
         {
+            UIHelper.DisplayHeader();
             var options = new List<string> 
             { 
                 "MAC Address Spoofer", 
@@ -127,7 +130,7 @@ namespace Atom
                 "Retour" 
             };
             int choice = UIHelper.SingleChoice(options);
-            Console.Clear();
+            UIHelper.TransitionEffect();
             switch (choice)
             {
                 case 0: MacSpooferService.HandleMacSpoofer(); break;
@@ -141,6 +144,7 @@ namespace Atom
 
         static async Task HandleUtilityMenu()
         {
+            UIHelper.DisplayHeader();
             var options = new List<string> 
             { 
                 "IP Lookup", 
@@ -149,7 +153,7 @@ namespace Atom
                 "Retour" 
             };
             int choice = UIHelper.SingleChoice(options);
-            Console.Clear();
+            UIHelper.TransitionEffect();
             switch (choice)
             {
                 case 0: await NetworkService.HandleIpLookup(); break;
