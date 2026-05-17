@@ -153,3 +153,6 @@ NuGet.Config
 
 # Others
 .DS_Store
+
+# Standalone Releases
+Releases/
