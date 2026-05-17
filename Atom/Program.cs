@@ -12,6 +12,7 @@ namespace Atom
     {
         static async Task Main(string[] args)
         {
+            Console.Title = $"ATOM | v{UpdateService.CurrentVersion}";
             await UpdateService.CheckForUpdates();
 
             var mainOptions = new List<string> 
@@ -164,6 +165,7 @@ namespace Atom
             { 
                 "IP Lookup", 
                 "Faker Tools (Identity/Card/Token)",
+                "QR Code Generator",
                 "YouTube Converter", 
                 "Retour" 
             };
@@ -173,9 +175,10 @@ namespace Atom
             {
                 case 0: await NetworkService.HandleIpLookup(); break;
                 case 1: FakerService.HandleFakerMenu(); break;
-                case 2: Console.WriteLine("[*] YouTube Converter: Option bientôt disponible..."); break;
+                case 2: QrCodeService.HandleQrCodeGenerator(); break;
+                case 3: Console.WriteLine("[*] YouTube Converter: Option bientôt disponible..."); break;
             }
-            if (choice != 3) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            if (choice != 4) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
         }
     }
 }
