@@ -31,7 +31,18 @@ namespace Atom
                 int selectedIndex = UIHelper.SingleChoice(mainOptions);
 
                 if (mainOptions[selectedIndex] == "Quitter")
+                {
+                    Console.Clear();
+                    UIHelper.DisplayHeader();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    string goodbye = "Merci d'avoir utilisé ATOM. À bientôt !";
+                    int left = Math.Max(0, (Console.WindowWidth - goodbye.Length) / 2);
+                    Console.SetCursorPosition(left, Console.CursorTop);
+                    Console.WriteLine(goodbye);
+                    Console.ResetColor();
+                    Thread.Sleep(2000);
                     break;
+                }
 
                 UIHelper.TransitionEffect();
                 switch (selectedIndex)
