@@ -140,6 +140,7 @@ namespace Atom
                 "MAC Address Spoofer", 
                 "Serial Checker", 
                 "Serial Changer (HWID)", 
+                "DLL Injector",
                 "Remove Discord Injection", 
                 "PC Cleaner (Temp/CrashDumps)",
                 "Retour" 
@@ -152,10 +153,11 @@ namespace Atom
                 case 1: MacSpooferService.HandleMacSpoofer(); break;
                 case 2: SystemService.HandleSerialChecker(); break;
                 case 3: SystemService.HandleSerialChanger(); break;
-                case 4: SecurityService.HandleRemoveDiscordInjection(); break;
-                case 5: CleanerService.HandleCleanerMenu(); break;
+                case 4: InjectorService.HandleInjectorMenu(); break;
+                case 5: SecurityService.HandleRemoveDiscordInjection(); break;
+                case 6: CleanerService.HandleCleanerMenu(); break;
             }
-            if (choice != 6) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            if (choice != 7) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
         }
 
         static async Task HandleUtilityMenu()
