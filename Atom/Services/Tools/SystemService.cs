@@ -2,11 +2,38 @@ using System;
 using System.Management;
 using Microsoft.Win32;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Atom.Services.Tools
 {
     public static class SystemService
     {
+        public static void HandleHWIDTool()
+        {
+            Console.WriteLine("=== YOUR HARDWARE ID (HWID) ===");
+            string hwid = GetHardwareId();
+            Console.WriteLine($"\n[>] HWID: {hwid}");
+            
+            Console.WriteLine("\n[*] Voulez-vous copier le HWID dans le presse-papier ? (O/N)");
+            var key = Console.ReadKey(true).Key;
+            if (key == ConsoleKey.O)
+            {
+                try
+                {
+                    // Using a Thread because Clipboard requires STA mode
+                    var thread = new System.Threading.Thread(() => Clipboard.SetText(hwid));
+                    thread.SetApartmentState(System.Threading.ApartmentState.STA);
+                    thread.Start();
+                    thread.Join();
+                    Console.WriteLine("[+] HWID copié avec succès !");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[!] Erreur lors de la copie : {ex.Message}");
+                }
+            }
+        }
+
         public static void HandleSerialChecker()
         {
             Console.WriteLine("=== SERIAL CHECKER ===");
@@ -16,7 +43,7 @@ namespace Atom.Services.Tools
                 Console.WriteLine($"[BIOS Serial] {GetWmiValue("Win32_BIOS", "SerialNumber")}");
                 Console.WriteLine($"[Mobo Serial] {GetWmiValue("Win32_BaseBoard", "SerialNumber")}");
                 Console.WriteLine($"[CPU ID]      {GetWmiValue("Win32_Processor", "ProcessorId")}");
-                Console.WriteLine($"[HWID]        {GetHardwareId()}");
+                Console.WriteLine($"[HWID Registry] {GetHardwareId()}");
             }
             catch (Exception ex)
             {
@@ -62,8 +89,15 @@ namespace Atom.Services.Tools
 
         private static string GetHardwareId()
         {
-            using var rk = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Cryptography");
-            return rk?.GetValue("MachineGuid")?.ToString() ?? "N/A";
+            try
+            {
+                using var rk = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Cryptography");
+                return rk?.GetValue("MachineGuid")?.ToString() ?? "N/A";
+            }
+            catch
+            {
+                return "N/A";
+            }
         }
 
         private static bool SetRegistryValue(string path, string name, string value)

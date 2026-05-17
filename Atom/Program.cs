@@ -135,6 +135,7 @@ namespace Atom
             UIHelper.DisplayHeader();
             var options = new List<string> 
             { 
+                "HWID Grabber",
                 "MAC Address Spoofer", 
                 "Serial Checker", 
                 "Serial Changer (HWID)", 
@@ -146,13 +147,14 @@ namespace Atom
             UIHelper.TransitionEffect();
             switch (choice)
             {
-                case 0: MacSpooferService.HandleMacSpoofer(); break;
-                case 1: SystemService.HandleSerialChecker(); break;
-                case 2: SystemService.HandleSerialChanger(); break;
-                case 3: SecurityService.HandleRemoveDiscordInjection(); break;
-                case 4: CleanerService.HandleCleanerMenu(); break;
+                case 0: SystemService.HandleHWIDTool(); break;
+                case 1: MacSpooferService.HandleMacSpoofer(); break;
+                case 2: SystemService.HandleSerialChecker(); break;
+                case 3: SystemService.HandleSerialChanger(); break;
+                case 4: SecurityService.HandleRemoveDiscordInjection(); break;
+                case 5: CleanerService.HandleCleanerMenu(); break;
             }
-            if (choice != 5) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            if (choice != 6) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
         }
 
         static async Task HandleUtilityMenu()
