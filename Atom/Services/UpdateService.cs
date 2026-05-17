@@ -4,6 +4,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using Atom.Utils;
 
 namespace Atom.Services
 {
@@ -26,17 +28,18 @@ namespace Atom.Services
                     if (!response.IsSuccessStatusCode) return;
 
                     var content = await response.Content.ReadAsStringAsync();
-                    // Basic JSON parsing to avoid heavy dependencies
                     string latestVersion = ExtractTag(content);
+                    string downloadUrl = ExtractDownloadUrl(content);
 
-                    if (!string.IsNullOrEmpty(latestVersion) && latestVersion != CurrentVersion)
+                    if (!string.IsNullOrEmpty(latestVersion) && latestVersion != CurrentVersion && !string.IsNullOrEmpty(downloadUrl))
                     {
+                        UIHelper.DisplayHeader();
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"\n[!] Une nouvelle version est disponible : {latestVersion} (Actuelle: {CurrentVersion})");
                         Console.WriteLine("[!] Mise à jour automatique en cours...");
                         Console.ResetColor();
                         
-                        await PerformUpdate();
+                        await PerformUpdate(latestVersion, downloadUrl);
                     }
                 }
             }
@@ -56,46 +59,76 @@ namespace Atom.Services
             return json.Substring(start, end - start);
         }
 
-        private static async Task PerformUpdate()
+        private static string ExtractDownloadUrl(string json)
         {
-            // Note: In a real environment, this would download the new binary and restart.
-            // For this specific request, we simulate the 'local update' by pulling git if available
-            // or informing the user to pull the latest changes.
+            int assetIndex = json.IndexOf("\"name\": \"Atom.exe\"");
+            if (assetIndex == -1) assetIndex = json.IndexOf(".exe\"");
             
-            Console.WriteLine("[*] Récupération des fichiers depuis GitHub...");
+            if (assetIndex == -1) return null;
+
+            int urlIndex = json.IndexOf("\"browser_download_url\":", assetIndex);
+            if (urlIndex == -1) return null;
+
+            int start = json.IndexOf("\"", urlIndex + 23) + 1;
+            int end = json.IndexOf("\"", start);
+            return json.Substring(start, end - start);
+        }
+
+        private static async Task PerformUpdate(string latestVersion, string downloadUrl)
+        {
+            Console.WriteLine("[*] Téléchargement de la nouvelle version...");
             
             try
             {
-                // Simple attempt to run git pull if we are in a repo
-                var process = new ProcessStartInfo
+                string currentExePath = Process.GetCurrentProcess().MainModule.FileName;
+                string tempExePath = currentExePath + ".new";
+
+                using (var client = new HttpClient())
                 {
-                    FileName = "git",
-                    Arguments = "pull",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                
-                using (var p = Process.Start(process))
-                {
-                    await p.WaitForExitAsync();
-                    if (p.ExitCode == 0)
+                    client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Atom-Tool", "1.0"));
+                    var response = await client.GetAsync(downloadUrl);
+                    if (!response.IsSuccessStatusCode)
                     {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("[+] Mise à jour réussie ! Veuillez redémarrer l'application.");
-                        Console.ResetColor();
-                        Thread.Sleep(2000);
-                        Environment.Exit(0);
+                        Console.WriteLine($"[!] Échec du téléchargement (Code: {response.StatusCode})");
+                        return;
                     }
-                    else
+
+                    using (var fs = new FileStream(tempExePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        Console.WriteLine("[!] Échec du 'git pull'. Veuillez télécharger la dernière release manuellement.");
+                        await response.Content.CopyToAsync(fs);
                     }
                 }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("[+] Téléchargement terminé. Redémarrage pour appliquer la mise à jour...");
+                Console.ResetColor();
+
+                string batchPath = Path.Combine(Path.GetTempPath(), "atom_update.bat");
+                string batchContent = $@"
+@echo off
+timeout /t 2 /nobreak > nul
+del ""{currentExePath}""
+move ""{tempExePath}"" ""{currentExePath}""
+start """" ""{currentExePath}""
+del ""%~f0""
+";
+                File.WriteAllText(batchPath, batchContent);
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"/c \"{batchPath}\"",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                });
+
+                Environment.Exit(0);
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("[!] Git non trouvé. Veuillez télécharger la dernière release sur GitHub.");
+                Console.WriteLine($"[!] Erreur lors de la mise à jour : {ex.Message}");
+                Console.WriteLine("[!] Veuillez télécharger la dernière version manuellement sur GitHub.");
+                Thread.Sleep(5000);
             }
         }
     }
