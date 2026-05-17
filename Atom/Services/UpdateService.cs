@@ -9,7 +9,7 @@ namespace Atom.Services
 {
     public static class UpdateService
     {
-        public const string CurrentVersion = "1.0.0";
+        public const string CurrentVersion = "1.0.1";
         private const string RepoOwner = "Redwxll-atm";
         private const string RepoName = "Tools";
 
