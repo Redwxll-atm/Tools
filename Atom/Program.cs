@@ -76,7 +76,8 @@ namespace Atom
                 "Guild Cloner", 
                 "Token Profile Editor",
                 "Avatar Scraper",
-                "Discord Rich Presence",
+                "Discord Rich Presence (App)",
+                "Token Custom Status (Account)",
                 "Retour" 
             };
             int choice = UIHelper.SingleChoice(options);
@@ -88,9 +89,10 @@ namespace Atom
                 case 2: await DiscordService.HandleTokenEditorMenu(); break;
                 case 3: await DiscordService.HandleAvatarScraper(); break;
                 case 4: DiscordRpcService.HandleRpcMenu(); break;
+                case 5: await DiscordTokenStatusService.HandleTokenStatusMenu(); break;
             }
-            if (choice != 5 && choice != 4) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
-            else if (choice == 4) { UIHelper.PressAnyKey(); }
+            if (choice != 6 && choice != 4 && choice != 5) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            else if (choice == 4 || choice == 5) { UIHelper.PressAnyKey(); }
         }
 
         static async Task HandleTokenMenu()
