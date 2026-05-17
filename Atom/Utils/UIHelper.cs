@@ -126,34 +126,38 @@ namespace Atom.Utils
             int height = Console.WindowHeight;
             Random rand = new Random();
             
-            int[] columns = new int[width];
-            for (int i = 0; i < width; i++) columns[i] = rand.Next(height);
-
             Console.ForegroundColor = ConsoleColor.Red;
             DateTime end = DateTime.Now.AddSeconds(1);
 
             while (DateTime.Now < end)
             {
-                for (int x = 0; x < width; x++)
+                // Increase density by drawing multiple characters per frame
+                for (int i = 0; i < (width * height) / 20; i++) 
                 {
-                    if (rand.Next(10) > 7) // Randomize rain density
+                    int x = rand.Next(width);
+                    int y = rand.Next(height);
+                    
+                    try 
                     {
-                        Console.SetCursorPosition(x, columns[x]);
-                        Console.Write((char)rand.Next(33, 126)); // Random ASCII chars
-                        
-                        columns[x]++;
-                        if (columns[x] >= height)
-                        {
-                            columns[x] = 0;
-                        }
-
-                        // Clear the character above to simulate movement
-                        int prevY = columns[x] - 1 < 0 ? height - 1 : columns[x] - 1;
-                        Console.SetCursorPosition(x, prevY);
+                        Console.SetCursorPosition(x, y);
+                        Console.Write((char)rand.Next(33, 126));
+                    }
+                    catch (ArgumentOutOfRangeException) { /* Ignore resize issues during transition */ }
+                }
+                Thread.Sleep(30);
+                
+                // Optional: slight fade effect by clearing a few random spots
+                for (int i = 0; i < (width * height) / 40; i++)
+                {
+                    int x = rand.Next(width);
+                    int y = rand.Next(height);
+                    try 
+                    {
+                        Console.SetCursorPosition(x, y);
                         Console.Write(" ");
                     }
+                    catch (ArgumentOutOfRangeException) { }
                 }
-                Thread.Sleep(20);
             }
             
             Console.ResetColor();
