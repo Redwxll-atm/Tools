@@ -101,16 +101,13 @@ namespace Atom.Services.Tools
         #region C# Engine
         private static string ObfuscateCSharp(string code)
         {
-            // 1. Advanced String Encryption (XOR with dynamic key)
+            // 1. Advanced String Encryption (Using fully qualified names for zero-dependency)
             code = AdvancedEncryptCSharpStrings(code);
 
-            // 2. Control Flow Confusion (Junk logic injection)
-            code = InjectCSharpControlFlowJunk(code);
+            // 2. Control Flow Confusion (Inject inside a dummy class to avoid scope issues)
+            code = InjectCSharpSafetyJunk(code);
 
-            // 3. Name Scrambling (Basic Regex-based for internal vars)
-            code = ScrambleCSharpVariables(code);
-            
-            return "/* [!] PROTECTED BY ATOM OBFUSCATOR v2.0 [!] */\n" + code;
+            return "/* [!] PROTECTED BY ATOM OBFUSCATOR [!] */\nusing System.Linq;\n" + code;
         }
 
         private static string AdvancedEncryptCSharpStrings(string code)
@@ -119,34 +116,27 @@ namespace Atom.Services.Tools
             return Regex.Replace(code, "\"([^\"]*)\"", m =>
             {
                 string val = m.Groups[1].Value;
-                if (string.IsNullOrEmpty(val)) return "\"\"";
+                if (string.IsNullOrEmpty(val) || val.Length < 2) return m.Value; // Don't encrypt very short strings/empty
                 
                 byte[] bytes = Encoding.UTF8.GetBytes(val);
                 for (int i = 0; i < bytes.Length; i++) bytes[i] ^= (byte)key;
                 
                 string b64 = Convert.ToBase64String(bytes);
-                return $"Encoding.UTF8.GetString(Convert.FromBase64String(\"{b64}\").Select(b => (byte)(b ^ {key})).ToArray())";
+                return $"System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(\"{b64}\").Select(b => (byte)(b ^ {key})).ToArray())";
             });
         }
 
-        private static string InjectCSharpControlFlowJunk(string code)
+        private static string InjectCSharpSafetyJunk(string code)
         {
-            string junk = "\n#region Internal_Logic\n[System.Runtime.CompilerServices.CompilerGenerated]\nprivate static void _0x" + Guid.NewGuid().ToString("N").Substring(0, 8) + "() { \n" +
-                          "  var _t = DateTime.Now.Ticks; \n" +
-                          "  if (_t % 2 == 0) { /* Dead code branch */ } \n" +
-                          "}\n#endregion\n";
-            return code.Insert(code.LastIndexOf('}') > 0 ? code.LastIndexOf('}') : code.Length, junk);
+            string junkClass = $"\ninternal static class _0x{Guid.NewGuid().ToString("N").Substring(0, 8)} {{ \n" +
+                               "  public static void Initialize() { var _t = System.DateTime.Now.Ticks; if (_t == 0) System.Console.WriteLine(\"Init\"); }\n" +
+                               "}\n";
+            return code + junkClass;
         }
 
         private static string ScrambleCSharpVariables(string code)
         {
-            // Simple logic to replace common variable patterns with unreadable ones
-            string[] patterns = { "var ", "string ", "int ", "bool " };
-            foreach (var p in patterns)
-            {
-                code = Regex.Replace(code, p + "([a-zA-Z_][a-zA-Z0-9_]*)", m => 
-                    p + "_0x" + Guid.NewGuid().ToString("N").Substring(0, 10));
-            }
+            // Disabled variable scrambling for now to ensure 100% executability without a Roslyn parser
             return code;
         }
         #endregion
@@ -154,31 +144,45 @@ namespace Atom.Services.Tools
         #region Python Engine
         private static string ObfuscatePython(string code)
         {
-            // Layer 1: Variable Scrambling
-            code = Regex.Replace(code, @"(\w+)\s*=\s*", m => $"_0x{Guid.NewGuid().ToString("N").Substring(0, 8)} = ");
+            // Use a mapping to ensure consistency (only for local-looking variables)
+            var map = new Dictionary<string, string>();
+            string processed = Regex.Replace(code, @"\b([a-z_][a-z0-9_]{3,})\b", m => {
+                string name = m.Groups[1].Value;
+                // Avoid keywords and common built-ins
+                if (IsPythonKeyword(name)) return name;
+                
+                if (!map.ContainsKey(name))
+                    map[name] = "_0x" + Guid.NewGuid().ToString("N").Substring(0, 8);
+                return map[name];
+            });
 
-            // Layer 2: Multi-pass Base64 + Zlib Compression
-            string current = code;
-            for (int i = 0; i < 3; i++)
+            // Layer 2: Multi-pass Base64
+            string current = processed;
+            for (int i = 0; i < 2; i++)
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(current);
                 string b64 = Convert.ToBase64String(bytes);
-                current = $"import base64;exec(base64.b64decode('{b64}').decode())";
+                current = $"import base64;exec(base64.b64decode('{b64}').decode('utf-8'))";
             }
 
             return "# [!] ATOM POLYMORPHIC ENGINE [!]\n" + current;
+        }
+
+        private static bool IsPythonKeyword(string word)
+        {
+            string[] keywords = { "import", "from", "def", "class", "return", "if", "else", "elif", "for", "while", "break", "continue", "print", "input", "range", "len", "open", "exec", "eval", "base64" };
+            return Array.Exists(keywords, k => k == word);
         }
         #endregion
 
         #region JavaScript Engine
         private static string ObfuscateJavaScript(string code)
         {
-            // Hex-encoding with an evaluation wrapper that looks like junk
             StringBuilder hex = new StringBuilder();
             foreach (char c in code) hex.Append("\\x" + ((int)c).ToString("X2"));
 
-            string junkPrefix = "var _0x" + Guid.NewGuid().ToString("N").Substring(0, 6) + "=['\\x65\\x76\\x61\\x6c'];";
-            return $"{junkPrefix}(function(_0x1,_0x2){{return _0x1[_0x2]}})(window,_0x{junkPrefix.Substring(7,6)}[0])(\"{hex}\");";
+            // Use a self-contained execution block that works in both Node and Browser
+            return $";(function(){{ var _e = (typeof window !== 'undefined' ? window : global).eval; _e(\"{hex}\"); }})();";
         }
         #endregion
     }
