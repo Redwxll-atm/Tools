@@ -12,6 +12,8 @@ namespace Atom
     {
         static async Task Main(string[] args)
         {
+            await UpdateService.CheckForUpdates();
+
             var mainOptions = new List<string> 
             { 
                 "Discord Webhook Tools", 
