@@ -12,9 +12,7 @@
 ## 📸 Interface Preview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Redwxll-atm/Tools/main/preview.png" alt="ATOM Interface" width="800">
-  <br>
-  <i>(Remplacez preview.png par votre capture d'écran dans le dépôt)</i>
+  <img src="./preview.png" alt="ATOM Interface" width="800">
 </p>
 
 ---
