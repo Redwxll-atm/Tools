@@ -30,7 +30,7 @@ namespace Atom
             {
                 UIHelper.DisplayHeader();
                 
-                int selectedIndex = UIHelper.SingleChoice(mainOptions);
+                int selectedIndex = UIHelper.SingleChoice(mainOptions, version: UpdateService.CurrentVersion);
 
                 if (mainOptions[selectedIndex] == "Quitter")
                 {

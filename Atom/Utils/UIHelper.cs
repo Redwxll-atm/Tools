@@ -147,8 +147,19 @@ namespace Atom.Utils
             if (OperatingSystem.IsWindows())
                 try { Console.Title = "ATOM — The Ultimate Multi-Tool"; } catch { }
 
-            // Lire la largeur APRÈS le Clear
             int w = Console.WindowWidth;
+
+            // ── Version Tag (Top-Left) ──────────────────────────────────────
+            if (!string.IsNullOrEmpty(version))
+            {
+                Console.SetCursorPosition(0, 0);
+                Console.ForegroundColor = AccentSecondary;
+                Console.Write(" ▓");
+                Console.ForegroundColor = TextBright;
+                Console.Write($" v{version} ");
+                Console.ForegroundColor = AccentSecondary;
+                Console.WriteLine("▓");
+            }
 
             int logoWidth = 0;
             foreach (var line in AsciiLogo)
