@@ -8,7 +8,6 @@
   <img src="https://img.shields.io/badge/Version-1.1.0-red?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/Language-C%23-blue?style=for-the-badge" alt="Language">
   <img src="https://img.shields.io/badge/Platform-Windows-0078d7?style=for-the-badge&logo=windows" alt="Platform">
-  <img src="https://img.shields.io/badge/Theme-Hacker-green?style=for-the-badge" alt="Theme">
 </p>
 
 ---
