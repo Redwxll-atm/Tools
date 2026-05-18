@@ -151,7 +151,7 @@ namespace Atom.Services.Tools
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", authHeader);
-            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
+            client.DefaultRequestHeaders.Add("User-Agent", "DiscordBot (https://github.com/AtomProject, 1.0.0)");
 
             for (int i = 0; i < count; i++)
             {
@@ -202,7 +202,7 @@ namespace Atom.Services.Tools
             using var client = new HttpClient();
             string authHeader = token;
             client.DefaultRequestHeaders.Add("Authorization", authHeader);
-            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
+            client.DefaultRequestHeaders.Add("User-Agent", "DiscordBot (https://github.com/AtomProject, 1.0.0)");
 
             var urls = new List<string>();
             UIHelper.PrintInfo("Création des webhooks...");
@@ -236,6 +236,7 @@ namespace Atom.Services.Tools
             {
                 tasks.Add(Task.Run(async () => {
                     using var whClient = new HttpClient();
+                    whClient.DefaultRequestHeaders.Add("User-Agent", "DiscordBot (https://github.com/AtomProject, 1.0.0)");
                     for (int j = 0; j < msgCount; j++)
                     {
                         var payload = new { content = message };
