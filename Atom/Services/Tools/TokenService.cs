@@ -90,6 +90,7 @@ namespace Atom.Services.Tools
             if (string.IsNullOrEmpty(code)) return;
 
             using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
             try
             {
                 var response = await client.GetAsync($"https://discord.com/api/v10/entitlements/gift-codes/{code}");
@@ -122,18 +123,24 @@ namespace Atom.Services.Tools
             Console.WriteLine("[*] Rotation démarrée. CTRL+C pour arrêter.");
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", token);
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
 
             int i = 0;
             while (true)
             {
                 try
                 {
+                    // For User accounts, the custom status is often in settings or profile
                     var payload = new { custom_status = new { text = statuses[i] } };
                     var json = JsonSerializer.Serialize(payload);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    await client.PatchAsync("https://discord.com/api/v10/users/@me/settings", content);
+                    var response = await client.PatchAsync("https://discord.com/api/v10/users/@me/settings", content);
                     
-                    Console.WriteLine($"[+] Statut mis à jour : {statuses[i]}");
+                    if (response.IsSuccessStatusCode)
+                        Console.WriteLine($"[+] Statut mis à jour : {statuses[i]}");
+                    else
+                        Console.WriteLine($"[-] Erreur ({response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
+
                     i = (i + 1) % statuses.Count;
                     await Task.Delay(10000); // 10 secondes entre chaque rotation
                 }

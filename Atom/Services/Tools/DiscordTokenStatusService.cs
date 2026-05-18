@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Discord;
-using Discord.WebSocket;
 using Atom.Utils;
 
 namespace Atom.Services.Tools
 {
     public static class DiscordTokenStatusService
     {
-        private static DiscordSocketClient? _client;
+        private static bool _isRunning = false;
 
         public static async Task HandleTokenStatusMenu()
         {
             UIHelper.PrintSectionHeader("Token Custom Status");
 
-            if (_client != null)
+            if (_isRunning)
             {
                 UIHelper.PrintWarning("Une session est déjà active.");
                 var subOptions = new List<string> { "Arrêter la session", "Retour" };
@@ -23,7 +24,8 @@ namespace Atom.Services.Tools
 
                 if (subChoice == 0)
                 {
-                    await StopStatus();
+                    _isRunning = false;
+                    UIHelper.PrintSuccess("Session arrêtée.");
                 }
                 return;
             }
@@ -31,79 +33,66 @@ namespace Atom.Services.Tools
             string token = UIHelper.Prompt("Token du compte") ?? "";
             if (string.IsNullOrEmpty(token)) return;
 
-            UIHelper.PrintInfo("Choisissez le type de statut :");
-            var types = new List<string> { "Streaming (Twitch)", "Playing", "Watching", "Listening", "Retour" };
-            int typeChoice = UIHelper.SingleChoice(types);
+            string text = UIHelper.Prompt("Texte du statut personnalisé") ?? "ATOM Multi-Tool";
+            
+            UIHelper.PrintInfo("Choisissez l'état de présence :");
+            var presenceOptions = new List<string> { "Online", "Idle", "DND", "Invisible", "Retour" };
+            int pChoice = UIHelper.SingleChoice(presenceOptions);
+            if (pChoice == 4) return;
 
-            if (typeChoice == 4) return;
-
-            string text = UIHelper.Prompt("Texte du statut") ?? "ATOM Multi-Tool";
-            string? url = null;
-
-            if (typeChoice == 0)
+            string status = pChoice switch
             {
-                url = UIHelper.Prompt("Lien Twitch (ex: https://twitch.tv/username)") ?? "https://twitch.tv/discord";
-            }
-
-            ActivityType activityType = typeChoice switch
-            {
-                0 => ActivityType.Streaming,
-                1 => ActivityType.Playing,
-                2 => ActivityType.Watching,
-                3 => ActivityType.Listening,
-                _ => ActivityType.Playing
+                0 => "online",
+                1 => "idle",
+                2 => "dnd",
+                3 => "invisible",
+                _ => "online"
             };
 
-            await StartStatus(token, text, activityType, url);
+            _isRunning = true;
+            await UpdateStatus(token, text, status);
         }
 
-        private static async Task StartStatus(string token, string text, ActivityType type, string? url)
+        private static async Task UpdateStatus(string token, string text, string status)
         {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", token);
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
+
             try
             {
-                var config = new DiscordSocketConfig
-                {
-                    GatewayIntents = GatewayIntents.None,
-                    LogLevel = LogSeverity.Error
+                var payload = new 
+                { 
+                    custom_status = new { text = text },
+                    status = status
                 };
+                
+                var json = JsonSerializer.Serialize(payload);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await client.PatchAsync("https://discord.com/api/v10/users/@me/settings", content);
 
-                _client = new DiscordSocketClient(config);
-
-                _client.Ready += async () =>
+                if (response.IsSuccessStatusCode)
                 {
-                    UIHelper.PrintSuccess($"Connecté sur le compte : {_client.CurrentUser.Username}");
-                    await _client.SetGameAsync(text, url, type);
-                    UIHelper.PrintSuccess($"Statut '{text}' activé !");
-                };
-
-                // Note: Discord.Net does not officially support user tokens (self-bots).
-                // This might work with some user tokens but is against Discord TOS.
-                await _client.LoginAsync(TokenType.Bot, token); 
-                await _client.StartAsync();
-
-                UIHelper.PrintInfo("Note: Le statut restera actif tant qu'ATOM est ouvert.");
+                    UIHelper.PrintSuccess($"Statut '{text}' ({status}) activé !");
+                }
+                else
+                {
+                    UIHelper.PrintError($"Erreur API: {response.StatusCode}");
+                    _isRunning = false;
+                }
             }
             catch (Exception ex)
             {
                 UIHelper.PrintError($"Erreur : {ex.Message}");
-                _client = null;
+                _isRunning = false;
             }
         }
 
-        public static async Task StopStatus()
+        public static Task StopStatus()
         {
-            if (_client != null)
-            {
-                await _client.StopAsync();
-                await _client.LogoutAsync();
-                _client.Dispose();
-                _client = null;
-                UIHelper.PrintSuccess("Session Token arrêtée.");
-            }
-            else
-            {
-                UIHelper.PrintInfo("Aucune session active.");
-            }
+            _isRunning = false;
+            UIHelper.PrintSuccess("Session Token arrêtée.");
+            return Task.CompletedTask;
         }
     }
 }
