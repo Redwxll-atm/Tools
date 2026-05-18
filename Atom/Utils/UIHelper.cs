@@ -152,7 +152,7 @@ namespace Atom.Utils
             // ── Version Tag (Top-Left) ──────────────────────────────────────
             if (!string.IsNullOrEmpty(version))
             {
-                Console.SetCursorPosition(0, 0);
+                SafeSetCursorPosition(0, 0);
                 Console.ForegroundColor = AccentSecondary;
                 Console.Write(" ▓");
                 Console.ForegroundColor = TextBright;
@@ -256,9 +256,9 @@ namespace Atom.Utils
                 string inner = $"  {arrow}  {options[index]}  ".PadRight(boxInner);
                 int boxLeft = Math.Max(0, (w - boxInner - 2) / 2);
 
-                Console.SetCursorPosition(0, menuTop + index);
+                SafeSetCursorPosition(0, menuTop + index);
                 Console.Write(new string(' ', w));
-                Console.SetCursorPosition(boxLeft, menuTop + index);
+                SafeSetCursorPosition(boxLeft, menuTop + index);
 
                 Console.ForegroundColor = TextDim;
                 Console.Write("│");
@@ -290,18 +290,18 @@ namespace Atom.Utils
                 int topRow = menuTop - 1;
                 if (topRow >= 0)
                 {
-                    Console.SetCursorPosition(0, topRow);
+                    SafeSetCursorPosition(0, topRow);
                     Console.Write(new string(' ', w));
-                    Console.SetCursorPosition(boxLeft, topRow);
+                    SafeSetCursorPosition(boxLeft, topRow);
                     Console.ForegroundColor = TextDim;
                     Console.Write(topBar);
                     Console.ResetColor();
                 }
 
                 int botRow = menuTop + options.Count;
-                Console.SetCursorPosition(0, botRow);
+                SafeSetCursorPosition(0, botRow);
                 Console.Write(new string(' ', w));
-                Console.SetCursorPosition(boxLeft, botRow);
+                SafeSetCursorPosition(boxLeft, botRow);
                 Console.ForegroundColor = TextDim;
                 Console.Write(botBar);
                 Console.ResetColor();
@@ -311,11 +311,11 @@ namespace Atom.Utils
             void DrawHint(int w)
             {
                 int hintRow = menuTop + options.Count + 2;
-                Console.SetCursorPosition(0, hintRow);
+                SafeSetCursorPosition(0, hintRow);
                 Console.Write(new string(' ', w));
                 string hint = "↑↓  naviguer     Enter  sélectionner";
                 Console.ForegroundColor = TextDim;
-                Console.SetCursorPosition(Math.Max(0, (w - hint.Length) / 2), hintRow);
+                SafeSetCursorPosition(Math.Max(0, (w - hint.Length) / 2), hintRow);
                 Console.Write(hint);
                 Console.ResetColor();
             }
@@ -381,10 +381,10 @@ namespace Atom.Utils
                 int clearTo = menuTop + options.Count + 3;
                 for (int r = menuTop - 1; r <= clearTo; r++)
                 {
-                    try { Console.SetCursorPosition(0, r); Console.Write(new string(' ', wFinal)); }
+                    try { SafeSetCursorPosition(0, r); Console.Write(new string(' ', wFinal)); }
                     catch { }
                 }
-                Console.SetCursorPosition(0, menuTop - 1);
+                SafeSetCursorPosition(0, menuTop - 1);
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -421,12 +421,8 @@ namespace Atom.Utils
                 int count = (width * height) / 15;
                 for (int i = 0; i < count; i++)
                 {
-                    try
-                    {
-                        Console.SetCursorPosition(rand.Next(width), rand.Next(height));
-                        Console.Write((char)rand.Next(33, 126));
-                    }
-                    catch (ArgumentOutOfRangeException) { }
+                    SafeSetCursorPosition(rand.Next(width), rand.Next(height));
+                    Console.Write((char)rand.Next(33, 126));
                 }
                 Thread.Sleep(25);
             }
@@ -435,8 +431,8 @@ namespace Atom.Utils
             Console.ResetColor();
             for (int row = 0; row < height; row++)
             {
-                try { Console.SetCursorPosition(0, row); Console.Write(new string(' ', width)); }
-                catch { }
+                SafeSetCursorPosition(0, row);
+                Console.Write(new string(' ', width));
                 Thread.Sleep(6);
             }
             Console.Clear();
@@ -474,10 +470,21 @@ namespace Atom.Utils
 
         // ─── Private helpers ─────────────────────────────────────────────────────────
 
+        private static void SafeSetCursorPosition(int left, int top)
+        {
+            try
+            {
+                int maxLeft = Console.WindowWidth - 1;
+                int maxTop = Console.WindowHeight - 1;
+                Console.SetCursorPosition(Math.Clamp(left, 0, maxLeft), Math.Clamp(top, 0, maxTop));
+            }
+            catch { }
+        }
+
         private static void CenterWrite(string text)
         {
             int left = Math.Max(0, (Console.WindowWidth - text.Length) / 2);
-            Console.SetCursorPosition(left, Console.CursorTop);
+            SafeSetCursorPosition(left, Console.CursorTop);
             Console.WriteLine(text);
         }
 
@@ -503,11 +510,11 @@ namespace Atom.Utils
             int pad = Math.Max(0, (inner - content.Length) / 2);
             string paddedContent = content.PadLeft(pad + content.Length).PadRight(inner);
 
-            Console.SetCursorPosition(left, Console.CursorTop);
+            SafeSetCursorPosition(left, Console.CursorTop);
             Console.ForegroundColor = TextDim;
             Console.WriteLine("┌" + new string('─', inner) + "┐");
 
-            Console.SetCursorPosition(left, Console.CursorTop);
+            SafeSetCursorPosition(left, Console.CursorTop);
             Console.ForegroundColor = TextDim;
             Console.Write("│");
             Console.ForegroundColor = AccentSecondary;
@@ -515,7 +522,7 @@ namespace Atom.Utils
             Console.ForegroundColor = TextDim;
             Console.WriteLine("│");
 
-            Console.SetCursorPosition(left, Console.CursorTop);
+            SafeSetCursorPosition(left, Console.CursorTop);
             Console.ForegroundColor = TextDim;
             Console.WriteLine("└" + new string('─', inner) + "┘");
             Console.ResetColor();
