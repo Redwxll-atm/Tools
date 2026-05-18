@@ -78,9 +78,6 @@ namespace Atom
             { 
                 "Webhook Tools (Check/Delete/Send)", 
                 "Guild Cloner", 
-                "Token Profile Editor",
-                "Avatar Scraper",
-                "Token Custom Status (Account)",
                 "Retour" 
             };
             int choice = UIHelper.SingleChoice(options);
@@ -89,12 +86,8 @@ namespace Atom
             {
                 case 0: await WebhookService.HandleWebhookMenu(); break;
                 case 1: await DiscordService.HandleGuildClonerMenu(); break;
-                case 2: await DiscordService.HandleTokenEditorMenu(); break;
-                case 3: await DiscordService.HandleAvatarScraper(); break;
-                case 4: await DiscordTokenStatusService.HandleTokenStatusMenu(); break;
             }
-            if (choice != 5 && choice != 4) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
-            else if (choice == 4) { UIHelper.PressAnyKey(); }
+            if (choice != 2) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
         }
 
         static async Task HandleTokenMenu()
@@ -103,10 +96,12 @@ namespace Atom
             var options = new List<string> 
             { 
                 "Token Checker/Info", 
+                "Token Profile Editor",
+                "Token Custom Status (Account)",
+                "Token Status Rotator",
                 "Token Formatter", 
                 "Token Sorter", 
                 "Remove Duplicates", 
-                "Token Status Rotator",
                 "Nitro Gift Checker",
                 "Payment Method Checker",
                 "Guild Management (List/Leave)",
@@ -117,15 +112,18 @@ namespace Atom
             switch (choice)
             {
                 case 0: await TokenService.HandleTokenInfo(); break;
-                case 1: TokenService.HandleTokenFormatter(); break;
-                case 2: TokenService.HandleTokenSorter(); break;
-                case 3: TokenService.HandleRemoveDuplicates(); break;
-                case 4: await TokenService.HandleStatusRotator(); break;
-                case 5: await TokenService.HandleNitroChecker(); break;
-                case 6: await TokenAdvancedService.HandlePaymentChecker(); break;
-                case 7: await TokenAdvancedService.HandleGuildTools(); break;
+                case 1: await DiscordService.HandleTokenEditorMenu(); break;
+                case 2: await DiscordTokenStatusService.HandleTokenStatusMenu(); break;
+                case 3: await TokenService.HandleStatusRotator(); break;
+                case 4: TokenService.HandleTokenFormatter(); break;
+                case 5: TokenService.HandleTokenSorter(); break;
+                case 6: TokenService.HandleRemoveDuplicates(); break;
+                case 7: await TokenService.HandleNitroChecker(); break;
+                case 8: await TokenAdvancedService.HandlePaymentChecker(); break;
+                case 9: await TokenAdvancedService.HandleGuildTools(); break;
             }
-            if (choice != 8) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            if (choice != 10 && choice != 2) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            else if (choice == 2) { UIHelper.PressAnyKey(); }
         }
 
         static async Task HandleProxyMenu()
@@ -173,6 +171,7 @@ namespace Atom
             UIHelper.DisplayHeader();
             var options = new List<string> 
             { 
+                "Avatar Scraper",
                 "IP Lookup", 
                 "Faker Tools (Identity/Card/Token)",
                 "QR Code Generator",
@@ -183,12 +182,13 @@ namespace Atom
             UIHelper.TransitionEffect();
             switch (choice)
             {
-                case 0: await NetworkService.HandleIpLookup(); break;
-                case 1: FakerService.HandleFakerMenu(); break;
-                case 2: QrCodeService.HandleQrCodeGenerator(); break;
-                case 3: Console.WriteLine("[*] YouTube Converter: Option bientôt disponible..."); break;
+                case 0: await DiscordService.HandleAvatarScraper(); break;
+                case 1: await NetworkService.HandleIpLookup(); break;
+                case 2: FakerService.HandleFakerMenu(); break;
+                case 3: QrCodeService.HandleQrCodeGenerator(); break;
+                case 4: Console.WriteLine("[*] YouTube Converter: Option bientôt disponible..."); break;
             }
-            if (choice != 4) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            if (choice != 5) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
         }
     }
 }
