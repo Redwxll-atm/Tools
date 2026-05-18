@@ -115,7 +115,10 @@ namespace Atom.Services
                     break;
                 case 1:
                     Console.Write("Nouveau Username : ");
-                    payload = new { username = Console.ReadLine() };
+                    string? newUsername = Console.ReadLine();
+                    Console.Write("Mot de passe du compte (Requis pour changer le pseudo) : ");
+                    string? password = Console.ReadLine();
+                    payload = new { username = newUsername, password = password };
                     break;
                 case 2:
                     url = "https://discord.com/api/v10/users/@me/profile";
