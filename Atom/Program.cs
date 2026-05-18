@@ -104,7 +104,10 @@ namespace Atom
                 "Remove Duplicates", 
                 "Nitro Gift Checker",
                 "Payment Method Checker",
-                "Guild Management (List/Leave)",
+                "Guild Management (Leave/Delete)",
+                "Friend Management (Block/Delete/Close DM)",
+                "Mass DM Friends",
+                "TOKEN NUKE (Destroy Account)",
                 "Retour" 
             };
             int choice = UIHelper.SingleChoice(options);
@@ -121,8 +124,11 @@ namespace Atom
                 case 7: await TokenService.HandleNitroChecker(); break;
                 case 8: await TokenAdvancedService.HandlePaymentChecker(); break;
                 case 9: await TokenAdvancedService.HandleGuildTools(); break;
+                case 10: await TokenAdvancedService.HandleFriendTools(); break;
+                case 11: await TokenAdvancedService.HandleMassDM(); break;
+                case 12: await TokenAdvancedService.HandleTokenNuke(); break;
             }
-            if (choice != 10 && choice != 2) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            if (choice != 13 && choice != 2) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
             else if (choice == 2) { UIHelper.PressAnyKey(); }
         }
 
