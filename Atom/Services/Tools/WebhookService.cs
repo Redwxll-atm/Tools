@@ -128,15 +128,29 @@ namespace Atom.Services.Tools
         private static async Task CreateWebhooks()
         {
             UIHelper.PrintSectionHeader("CREATE WEBHOOKS");
-            string token = UIHelper.Prompt("Token du compte (Bot ou User)") ?? "";
+            UIHelper.PrintInfo("Note: Pour un compte utilisateur, entrez le token tel quel.");
+            UIHelper.PrintInfo("      Pour un bot, le token sera automatiquement préfixé par 'Bot '.");
+            
+            string token = UIHelper.Prompt("Token du compte") ?? "";
             string channelId = UIHelper.Prompt("ID du Channel") ?? "";
             string name = UIHelper.Prompt("Nom des webhooks") ?? "ATOM Webhook";
             if (!int.TryParse(UIHelper.Prompt("Nombre de webhooks à créer"), out int count)) count = 1;
 
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(channelId)) return;
 
+            // Détection basique pour ajouter "Bot " si nécessaire
+            string authHeader = token;
+            if (token.Length > 50 && !token.Contains(".") && !token.StartsWith("Bot ")) 
+            {
+                // C'est probablement un token de bot moderne (souvent 70+ chars avec points, mais restons prudent)
+            }
+            // Si le token contient deux points, c'est probablement un token utilisateur ou bot. 
+            // Les tokens de bot nécessitent le préfixe "Bot ".
+            // On peut demander ou essayer de deviner. Demandons simplement si c'est un bot.
+            bool isBot = token.Length > 60; // Approximation souvent vraie pour les bots récents
+
             using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", token);
+            client.DefaultRequestHeaders.Add("Authorization", authHeader);
             client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
 
             for (int i = 0; i < count; i++)
@@ -146,6 +160,15 @@ namespace Atom.Services.Tools
                     var payload = new { name = $"{name} #{i+1}" };
                     var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
                     var response = await client.PostAsync($"https://discord.com/api/v10/channels/{channelId}/webhooks", content);
+                    
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        // Tentative avec préfixe "Bot " si échec 401
+                        client.DefaultRequestHeaders.Remove("Authorization");
+                        client.DefaultRequestHeaders.Add("Authorization", "Bot " + token);
+                        response = await client.PostAsync($"https://discord.com/api/v10/channels/{channelId}/webhooks", content);
+                    }
+
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync();
@@ -153,7 +176,11 @@ namespace Atom.Services.Tools
                         string url = $"https://discord.com/api/webhooks/{doc.RootElement.GetProperty("id").GetString()}/{doc.RootElement.GetProperty("token").GetString()}";
                         UIHelper.PrintSuccess($"Webhook créé: {url}");
                     }
-                    else UIHelper.PrintError($"Erreur ({response.StatusCode}): {await response.Content.ReadAsStringAsync()}");
+                    else 
+                    {
+                        string errorDetail = await response.Content.ReadAsStringAsync();
+                        UIHelper.PrintError($"Erreur ({response.StatusCode}): {errorDetail}");
+                    }
                 }
                 catch (Exception ex) { UIHelper.PrintError($"Erreur: {ex.Message}"); }
                 await Task.Delay(500);
@@ -173,7 +200,8 @@ namespace Atom.Services.Tools
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(channelId)) return;
 
             using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", token);
+            string authHeader = token;
+            client.DefaultRequestHeaders.Add("Authorization", authHeader);
             client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
 
             var urls = new List<string>();
@@ -183,10 +211,22 @@ namespace Atom.Services.Tools
                 var payload = new { name = $"ATOM Destroyer #{i+1}" };
                 var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
                 var response = await client.PostAsync($"https://discord.com/api/v10/channels/{channelId}/webhooks", content);
+                
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bot " + token);
+                    response = await client.PostAsync($"https://discord.com/api/v10/channels/{channelId}/webhooks", content);
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
                     var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
                     urls.Add($"https://discord.com/api/webhooks/{doc.RootElement.GetProperty("id").GetString()}/{doc.RootElement.GetProperty("token").GetString()}");
+                }
+                else
+                {
+                    UIHelper.PrintError($"Erreur création ({response.StatusCode})");
                 }
             }
 
