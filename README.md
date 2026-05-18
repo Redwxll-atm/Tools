@@ -1,73 +1,80 @@
-# <p align="center">🔴 ATOM — The  Multi-Tool 🔴</p>
+# 🌌 ATOM | THE ULTIMATE MULTI-TOOL
 
 <p align="center">
-  <img src="https://img.shields.io/github/languages/top/Redwxll-atm/Tools?style=for-the-badge&color=red" alt="Language">
-  <img src="https://img.shields.io/github/stars/Redwxll-atm/Tools?style=for-the-badge&color=red" alt="Stars">
-  <img src="https://img.shields.io/github/forks/Redwxll-atm/Tools?style=for-the-badge&color=red" alt="Forks">
-  <img src="https://img.shields.io/github/license/Redwxll-atm/Tools?style=for-the-badge&color=red" alt="License">
+  <img src="preview.png" alt="ATOM Preview" width="600">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Version-1.1.0-red?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Language-C%23-blue?style=for-the-badge" alt="Language">
+  <img src="https://img.shields.io/badge/Platform-Windows-0078d7?style=for-the-badge&logo=windows" alt="Platform">
+  <img src="https://img.shields.io/badge/Theme-Hacker-green?style=for-the-badge" alt="Theme">
 </p>
 
 ---
 
-##  Interface Preview
+## ⚡ PRÉSENTATION
+**ATOM** est un multi-tool professionnel conçu pour l'automatisation, la sécurité et la gestion avancée de comptes Discord et d'outils système. Développé en C# avec une interface console haute performance et esthétique.
+
+---
+
+## 🛠️ FONCTIONNALITÉS (ARSENAL)
+
+### 💎 TOKEN TOOLS (ADVANCED)
+*   **Token Checker / Info** : Analyse approfondie des tokens (Nitro, Badges, Billing, etc.).
+*   **Token Profile Editor** : Changez Bio, Username (avec mot de passe) et Pronoms instantanément.
+*   **Token Custom Status** : Modifiez votre statut personnalisé et votre présence (Online, Idle, DND, Invisible).
+*   **Token Status Rotator** : Faites défiler une liste de statuts automatiquement.
+*   **Guild Management** : Quittez tous les serveurs ou supprimez vos propres serveurs en un clic.
+*   **Friend Management** : Supprimez/Bloquez tous vos amis ou fermez tous vos DMs.
+*   **Mass DM Friends** : Envoyez un message à tous vos contacts.
+*   **🔥 TOKEN NUKE** : Protocole de destruction totale de compte (Servers, Friends, DMs, Settings).
+
+### ⚓ WEBHOOK TOOLS
+*   **Check & Info** : Vérification de validité et extraction de données détaillées.
+*   **Delete Webhook** : Suppression instantanée de n'importe quel webhook.
+*   **Spam Webhook** : Envoi massif de messages avec délai personnalisable.
+*   **Create Webhooks** : Création rapide de webhooks sur n'importe quel salon (Bot/User).
+*   **⚡ CREATE + SPAM** : L'outil ultime pour saturer un salon en quelques secondes.
+
+### 🛡️ SYSTEM & SECURITY
+*   **DLL Injector** : Injecteur de DLL haute performance (Support Unicode/x64).
+*   **MAC Spoofer** : Changez l'adresse physique de votre carte réseau.
+*   **HWID Grabber** : Récupérez vos identifiants matériels uniques.
+*   **PC Cleaner** : Nettoyage en profondeur des fichiers temporaires et des logs.
+*   **Discord Protection** : Suppression des injections malveillantes dans Discord.
+
+### 🌐 UTILS
+*   **Avatar Scraper** : Récupérez l'URL de l'avatar de n'importe quel utilisateur.
+*   **IP Lookup** : Informations géographiques détaillées sur n'importe quelle IP.
+*   **QR Generator** : Créez des QR codes personnalisés.
+*   **YouTube Converter** : (Bientôt disponible).
+
+---
+
+## 🚀 INSTALLATION
+
+1.  **Prérequis** : [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+2.  **Clonage** :
+    ```bash
+    git clone https://github.com/Redwxll-atm/Tools.git
+    cd Tools
+    ```
+3.  **Compilation** :
+    ```bash
+    dotnet build
+    ```
+4.  **Exécution** :
+    Lancer `Atom.exe` dans le dossier `bin/Debug/net10.0-windows/`.
+
+---
+
+## ⚠️ AVERTISSEMENT LÉGAL
+Cet outil est destiné à des fins éducatives et de test de sécurité uniquement. L'auteur n'est en aucun cas responsable de l'usage abusif ou illégal de cet outil. L'utilisation de self-bots est contre les conditions d'utilisation de Discord. **Utilisez à vos propres risques.**
+
+---
 
 <p align="center">
-  <img src="./preview.png" alt="ATOM Interface" width="800">
-</p>
-
----
-
-##  Features
-
-### 🔹 Discord Tools
-- **Webhook Manager**: Check, Delete, and Send messages via Webhooks.
-- **Token Custom Status**: Set Streaming, Playing, Watching, or Listening status on any account via Token.
-- **Token Tools**: Advanced Checker, Formatter, Sorter, and Nitro/Payment checker.
-- **Profile Editor**: Change Bio, Username, and Pronouns instantly.
-- **Guild Cloner**: Backup and Clone server structures (Roles, Categories, Channels).
-- **Avatar Scraper**: Get any user's avatar URL in high quality.
-
-### 🔹 System & Security
-- **DLL Injector**: Professional memory injection for target processes.
-- **HWID Grabber**: Get your unique Hardware ID.
-- **MAC Spoofer**: Change your Network Adapter's MAC address easily.
-- **Serial Checker & Changer**: Monitor and modify system HWID serials.
-- **Discord Injection Cleaner**: Detect and remove malicious injections in Discord files.
-- **PC Cleaner**: Clear Temp files and CrashDumps to boost performance.
-
-### 🔹 Utilities
-- **IP Lookup**: Get detailed information about any IP address.
-- **Faker Tools**: Generate fake Identities, Credit Cards, and Tokens for testing.
-- **QR Code Generator**: Create custom QR codes instantly.
-- **YouTube Converter**: (Coming Soon) High-quality video/audio conversion.
-
----
-
-## 🛠️ Installation
-
-1. **Prerequisites**:
-   - Install [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-   - Windows OS (Required for some features like Injector/Spoofer)
-
-2. **Clone & Build**:
-   ```bash
-   git clone https://github.com/Redwxll-atm/Tools.git
-   cd Tools/Atom
-   dotnet build
-   ```
-
-3. **Run**:
-   ```bash
-   dotnet run
-   ```
-
----
-
-## ⚠️ Disclaimer
-This tool is for educational purposes only. The developer is not responsible for any misuse or damage caused by this program. Please use it responsibly and follow Discord's Terms of Service.
-
----
-
-<p align="center">
-  Developed with ❤️ by <a href="https://github.com/Redwxll-atm">Redwxll-atm</a>
+  <b>Developed with ❤️ by Redwxll</b><br>
+  <i>"Control is an illusion."</i>
 </p>
