@@ -73,38 +73,40 @@ namespace Atom.Services.Tools
             if (hProcess == IntPtr.Zero)
             {
                 UIHelper.PrintError("Impossible d'ouvrir le processus (Erreur: " + Marshal.GetLastWin32Error() + ")");
+                UIHelper.PrintInfo("Assurez-vous de lancer ATOM en tant qu'administrateur.");
                 return;
             }
 
             try
             {
-                IntPtr loadLibAddr = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryA");
+                IntPtr loadLibAddr = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryW");
                 if (loadLibAddr == IntPtr.Zero)
                 {
-                    UIHelper.PrintError("Impossible de trouver LoadLibraryA.");
+                    UIHelper.PrintError("Impossible de trouver LoadLibraryW.");
                     return;
                 }
 
-                uint size = (uint)((dllPath.Length + 1) * Marshal.SizeOf(typeof(char)));
+                uint size = (uint)((dllPath.Length + 1) * 2); // 2 bytes per char for Unicode
                 IntPtr allocMemAddress = VirtualAllocEx(hProcess, IntPtr.Zero, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
                 if (allocMemAddress == IntPtr.Zero)
                 {
-                    UIHelper.PrintError("Échec de l'allocation mémoire dans le processus cible.");
+                    UIHelper.PrintError("Échec de l'allocation mémoire dans le processus cible (Erreur: " + Marshal.GetLastWin32Error() + ")");
                     return;
                 }
 
-                byte[] buffer = Encoding.Default.GetBytes(dllPath);
+                byte[] buffer = Encoding.Unicode.GetBytes(dllPath + "\0");
                 if (!WriteProcessMemory(hProcess, allocMemAddress, buffer, (uint)buffer.Length, out _))
                 {
-                    UIHelper.PrintError("Échec de l'écriture de la mémoire.");
+                    UIHelper.PrintError("Échec de l'écriture de la mémoire (Erreur: " + Marshal.GetLastWin32Error() + ")");
                     return;
                 }
 
                 IntPtr threadHandle = CreateRemoteThread(hProcess, IntPtr.Zero, 0, loadLibAddr, allocMemAddress, 0, out _);
                 if (threadHandle == IntPtr.Zero)
                 {
-                    UIHelper.PrintError("Échec de la création du thread distant.");
+                    UIHelper.PrintError("Échec de la création du thread distant (Erreur: " + Marshal.GetLastWin32Error() + ")");
+                    UIHelper.PrintInfo("Cela peut arriver si l'architecture d'ATOM ne correspond pas à celle du processus cible (x86 vs x64).");
                     return;
                 }
 

@@ -33,6 +33,7 @@ namespace Atom.Services
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", token);
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
 
             try
             {
@@ -100,6 +101,7 @@ namespace Atom.Services
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", token);
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
 
             string url = "https://discord.com/api/v10/users/@me";
             object? payload = null;
@@ -107,6 +109,7 @@ namespace Atom.Services
             switch (choice)
             {
                 case 0:
+                    url = "https://discord.com/api/v10/users/@me/profile";
                     Console.Write("Nouvelle Bio : ");
                     payload = new { bio = Console.ReadLine() };
                     break;
@@ -115,6 +118,7 @@ namespace Atom.Services
                     payload = new { username = Console.ReadLine() };
                     break;
                 case 2:
+                    url = "https://discord.com/api/v10/users/@me/profile";
                     Console.Write("Nouveaux Pronoms : ");
                     payload = new { pronouns = Console.ReadLine() };
                     break;
@@ -128,7 +132,11 @@ namespace Atom.Services
             if (response.IsSuccessStatusCode)
                 Console.WriteLine("[+] Profil mis à jour !");
             else
+            {
+                string errorMsg = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"[-] Erreur: {response.StatusCode}");
+                Console.WriteLine($"Détails: {errorMsg}");
+            }
             
             Console.WriteLine("\nAppuyez sur une touche...");
             Console.ReadKey();
@@ -145,6 +153,7 @@ namespace Atom.Services
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", token);
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
 
             try
             {
@@ -153,13 +162,18 @@ namespace Atom.Services
                 {
                     var json = await response.Content.ReadAsStringAsync();
                     using var doc = JsonDocument.Parse(json);
-                    var avatar = doc.RootElement.GetProperty("avatar").GetString();
-                    if (avatar != null)
+                    
+                    if (doc.RootElement.TryGetProperty("avatar", out var avatarProp) && avatarProp.ValueKind != JsonValueKind.Null)
                     {
+                        string avatar = avatarProp.GetString()!;
                         string avatarUrl = $"https://cdn.discordapp.com/avatars/{userId}/{avatar}.png?size=1024";
                         Console.WriteLine($"[+] Avatar URL: {avatarUrl}");
                     }
                     else Console.WriteLine("[-] Cet utilisateur n'a pas d'avatar.");
+                }
+                else
+                {
+                    Console.WriteLine($"[-] Erreur API: {response.StatusCode}");
                 }
             }
             catch (Exception ex) { Console.WriteLine($"[!] Erreur: {ex.Message}"); }
