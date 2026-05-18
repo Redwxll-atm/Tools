@@ -23,6 +23,7 @@ namespace Atom
                 "System & Security Tools", 
                 "Network & Utility Tools",
                 "Obfuscation Tools",
+                "About ATOM",
                 "Quitter" 
             };
             
@@ -67,8 +68,28 @@ namespace Atom
                     case 5:
                         ObfuscationService.HandleObfuscationMenu();
                         break;
+                    case 6:
+                        HandleAbout();
+                        break;
                 }
             }
+        }
+
+        static void HandleAbout()
+        {
+            UIHelper.PrintSectionHeader("ABOUT ATOM");
+            UIHelper.PrintInfo("Project Name    : ATOM Suite");
+            UIHelper.PrintInfo("Version         : " + UpdateService.CurrentVersion);
+            UIHelper.PrintInfo("Developer       : Redwxll");
+            UIHelper.PrintInfo("Architecture    : Service-Oriented (C# / .NET 10)");
+            Console.WriteLine();
+            UIHelper.PrintInfo("Description     : ATOM is a high-performance administration suite");
+            UIHelper.PrintInfo("                  designed for advanced Discord account and");
+            UIHelper.PrintInfo("                  system management. Built for reliability,");
+            UIHelper.PrintInfo("                  security, and automation.");
+            Console.WriteLine();
+            UIHelper.PrintInfo("License         : Educational / Security Research Use Only");
+            UIHelper.PressAnyKey();
         }
 
         static async Task HandleDiscordMenu()
