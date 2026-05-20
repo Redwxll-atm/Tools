@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="preview.png" alt="ATOM Banner" width="600">
+  <img src="image.png" alt="ATOM Banner" width="600">
 </p>
 
 <h1 align="center">⚛️ ATOM - Ultimate Multi-Tool ⚛️</h1>
