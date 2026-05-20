@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-1.0.5-blueviolet?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.0.6-blueviolet?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/Language-C%23-green?style=for-the-badge" alt="Language">
   <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge" alt="Platform">
 </p>
