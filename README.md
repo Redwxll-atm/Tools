@@ -2,7 +2,7 @@
   <img src="image.png" alt="ATOM Banner" width="600">
 </p>
 
-<h1 align="center">⚛️ ATOM - Ultimate Multi-Tool ⚛️</h1>
+<h1 align="center"> ATOM - Ultimate Multi-Tool </h1>
 
 <p align="center">
   <strong>The most powerful Discord, OSINT, and System management suite built with .NET 10.</strong>
