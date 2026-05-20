@@ -6,7 +6,7 @@ namespace Atom.Utils
 {
     public static class UIHelper
     {
-        // ─── Palette ────────────────────────────────────────────────────────────────
+        // ─── Palette ─────────────────────────────────────────────────────────────────
         private static readonly ConsoleColor AccentPrimary = ConsoleColor.Red;
         private static readonly ConsoleColor AccentSecondary = ConsoleColor.DarkRed;
         private static readonly ConsoleColor TextBright = ConsoleColor.White;
@@ -16,30 +16,41 @@ namespace Atom.Utils
         private static readonly ConsoleColor Warning = ConsoleColor.Yellow;
         private static readonly ConsoleColor Error = ConsoleColor.Red;
 
-        // ─── ASCII Art ───────────────────────────────────────────────────────────────
-        // Double espace uniforme entre chaque lettre — A aligné pixel-perfect
+        // ─── ASCII Art ────────────────────────────────────────────────────────────────
+        //  Style "liquid / dripping" — effet coulant et fondu (CORRIGÉ : ATOM)
         private static readonly string[] AsciiLogo =
         {
-            @"  ░█████╗░  ████████╗  ░█████╗░  ███╗░░░███╗",
-            @"  ██╔══██╗  ╚══██╔══╝  ██╔══██╗  ████╗░████║",
-            @"  ███████║  ░░░██║░░░  ██║░░██║  ██╔████╔██║",
-            @"  ██╔══██║  ░░░██║░░░  ██║░░██║  ██║╚██╔╝██║",
-            @"  ██║░░██║  ░░░██║░░░  ╚█████╔╝  ██║░╚═╝░██║",
-            @"  ╚═╝░░╚═╝  ░░╚═╝░░░  ░╚════╝░  ╚═╝░░░░░╚═╝",
+            @"    ▄████████  ▄████████  ▄██████▄     ▄▄▄▄███▄▄▄  ",
+            @"   ███    ███ ▀█████████▀ ███    ███   ▄██▀▀▀███▀▀▀██▄",
+            @"   ███    ███    ███      ███    ███   ███   ███   ███",
+            @"   ███    ███    ███      ███    ███   ███   ███   ███",
+            @" ▀███████████    ███      ███    ███   ███   ███   ███",
+            @"   ███    ███    ███      ███    ███   ███   ███   ███",
+            @"   ███    ███    ███      ███    ███   ███   ███   ███",
+            @"   ███    █▀     ███       ▀██████▀     ▀█   ███   █▀ ",
+            @"    █            █         █            █         █",
+            @"    ░            ░         ░            ░         ░",
         };
 
-        // Dégradé dark → bright → dark
+        // Tout en rouge comme demandé
         private static readonly ConsoleColor[] AsciiLogoColors =
         {
             ConsoleColor.DarkRed,
             ConsoleColor.DarkRed,
-            ConsoleColor.Red,
-            ConsoleColor.Red,
+            ConsoleColor.DarkRed,
+            ConsoleColor.DarkRed,
+            ConsoleColor.DarkRed,
+            ConsoleColor.DarkRed,
+            ConsoleColor.DarkRed,
+            ConsoleColor.DarkRed,
             ConsoleColor.DarkRed,
             ConsoleColor.DarkRed,
         };
 
-        // ─── Print helpers ───────────────────────────────────────────────────────────
+        // Tagline affichée sous le logo
+        private const string Tagline = "[ Advanced  Toolkit  for  Offensive  Mastery ]";
+
+        // ─── Print helpers ────────────────────────────────────────────────────────────
 
         public static void WriteLine(string text, ConsoleColor color = ConsoleColor.Gray)
         {
@@ -78,18 +89,18 @@ namespace Atom.Utils
         public static void PrintInfo(string msg)
         {
             Console.ForegroundColor = AccentSecondary;
-            Console.Write("  [*] ");
+            Console.Write("  [~] ");
             Console.ForegroundColor = TextMuted;
             Console.WriteLine(msg);
             Console.ResetColor();
         }
 
-        public static void PrintField(string label, string value, int labelWidth = 10)
+        public static void PrintField(string label, string value, int labelWidth = 12)
         {
             Console.ForegroundColor = TextDim;
-            Console.Write($"  {label.PadRight(labelWidth)} ");
+            Console.Write($"  {label.PadRight(labelWidth)}");
             Console.ForegroundColor = AccentSecondary;
-            Console.Write(": ");
+            Console.Write(" │ ");
             Console.ForegroundColor = TextBright;
             Console.WriteLine(value);
             Console.ResetColor();
@@ -97,10 +108,13 @@ namespace Atom.Utils
 
         public static string? Prompt(string question)
         {
+            Console.WriteLine();
             Console.ForegroundColor = AccentSecondary;
-            Console.Write("\n  ❯ ");
+            Console.Write("  ┌─ ");
             Console.ForegroundColor = TextBright;
-            Console.Write($"{question}: ");
+            Console.WriteLine(question);
+            Console.ForegroundColor = AccentSecondary;
+            Console.Write("  └─▶ ");
             Console.ForegroundColor = TextMuted;
             string? input = Console.ReadLine();
             Console.ResetColor();
@@ -111,104 +125,112 @@ namespace Atom.Utils
         {
             Console.WriteLine();
             Console.ForegroundColor = TextDim;
-            CenterWrite("Appuyez sur une touche pour continuer…");
+            CenterWrite("── appuyez sur une touche pour continuer ──");
             Console.ResetColor();
             Console.ReadKey(true);
         }
 
-        // ─── Section header ──────────────────────────────────────────────────────────
+        // ─── Section header ───────────────────────────────────────────────────────────
 
         public static void PrintSectionHeader(string title)
         {
             Console.WriteLine();
-            int width = Math.Min(Console.WindowWidth - 4, 50);
-            string inner = $"  {title.ToUpper()}  ".PadRight(width);
+            int width = Math.Min(Console.WindowWidth - 4, 54);
+            string label = $"  {title.ToUpper()}  ";
+            int padRight = width - label.Length;
 
             Console.ForegroundColor = AccentSecondary;
-            Console.WriteLine($"  ╔{new string('═', width)}╗");
+            Console.Write("  ┌");
             Console.ForegroundColor = AccentPrimary;
-            Console.Write("  ║");
-            Console.ForegroundColor = TextBright;
-            Console.Write(inner);
-            Console.ForegroundColor = AccentPrimary;
-            Console.WriteLine("║");
+            Console.Write(new string('─', width));
             Console.ForegroundColor = AccentSecondary;
-            Console.WriteLine($"  ╚{new string('═', width)}╝");
+            Console.WriteLine("┐");
+
+            Console.Write("  │");
+            Console.ForegroundColor = TextBright;
+            Console.Write(label);
+            Console.ForegroundColor = TextDim;
+            Console.Write(new string(' ', Math.Max(0, padRight)));
+            Console.ForegroundColor = AccentSecondary;
+            Console.WriteLine("│");
+
+            Console.Write("  └");
+            Console.ForegroundColor = AccentPrimary;
+            Console.Write(new string('─', width));
+            Console.ForegroundColor = AccentSecondary;
+            Console.WriteLine("┘");
             Console.ResetColor();
             Console.WriteLine();
         }
 
-        // ─── DisplayHeader ───────────────────────────────────────────────────────────
+        // ─── DisplayHeader ────────────────────────────────────────────────────────────
 
         public static void DisplayHeader(string version = "")
         {
             Console.Clear();
 
             if (OperatingSystem.IsWindows())
-                try { Console.Title = "ATOM — The Ultimate Multi-Tool"; } catch { }
+                try { Console.Title = "ATOM — Advanced Toolkit for Offensive Mastery"; } catch { }
 
             int w = Console.WindowWidth;
 
-            // ── Version Tag (Top-Left) ──────────────────────────────────────
-            if (!string.IsNullOrEmpty(version))
-            {
-                SafeSetCursorPosition(0, 0);
-                Console.ForegroundColor = AccentSecondary;
-                Console.Write(" ▓");
-                Console.ForegroundColor = TextBright;
-                Console.Write($" v{version} ");
-                Console.ForegroundColor = AccentSecondary;
-                Console.WriteLine("▓");
-            }
-
+            // ── Largeur de la bordure calée sur le logo ─────────────────────
             int logoWidth = 0;
             foreach (var line in AsciiLogo)
                 if (line.Length > logoWidth) logoWidth = line.Length;
 
-            int borderW = Math.Max(logoWidth + 4, Math.Min(w - 2, 60));
-            string border = new string('▓', borderW);
+            int borderW = Math.Max(logoWidth + 6, Math.Min(w - 2, 62));
 
-            // ── Top border ──────────────────────────────────────────────────
+            // ── Bordure haute ────────────────────────────────────────────────
             Console.ForegroundColor = AccentSecondary;
-            CenterWrite(border);
-            Console.ResetColor();
-            Console.WriteLine();
+            CenterWrite("╔" + new string('═', borderW) + "╗");
 
-            // ── Logo ────────────────────────────────────────────────────────
-            for (int i = 0; i < AsciiLogo.Length; i++)
+            // ── Ligne vide ───────────────────────────────────────────────────
+            Console.ForegroundColor = AccentSecondary;
+            CenterWrite("║" + new string(' ', borderW) + "║");
+
+            // ── Logo ─────────────────────────────────────────────────────────
+            foreach (var (line, idx) in IndexedLines(AsciiLogo))
             {
-                Console.ForegroundColor = AsciiLogoColors[i];
-                CenterWrite(AsciiLogo[i]);
+                int pad = (borderW - line.Length) / 2;
+                string padded = new string(' ', Math.Max(0, pad))
+                              + line
+                              + new string(' ', Math.Max(0, borderW - line.Length - pad));
+
+                Console.ForegroundColor = AccentSecondary;
+                PrintCenteredInBorder("║", padded, "║", AsciiLogoColors[idx]);
             }
 
-            // ── Subtitle ────────────────────────────────────────────────────
-            Console.WriteLine();
-            string core = string.IsNullOrEmpty(version)
-                ? " THE·ULTIMATE·MULTI·TOOL "
-                : $" THE·ULTIMATE·MULTI·TOOL  [v{version}] ";
-
-            int padEach = Math.Max(2, (borderW - core.Length) / 2);
-            string sub = new string('░', padEach) + core + new string('░', padEach);
-            if (sub.Length < borderW) sub += "░";
-            if (sub.Length > borderW) sub = sub[..borderW];
-
-            Console.ForegroundColor = TextDim;
-            CenterWrite(sub);
-            Console.ResetColor();
-
-            // ── Bottom border ───────────────────────────────────────────────
-            Console.WriteLine();
+            // ── Séparateur ────────────────────────────────────────────────────
             Console.ForegroundColor = AccentSecondary;
-            CenterWrite(border);
+            CenterWrite("╠" + new string('═', borderW) + "╣");
+
+            // ── Tagline ───────────────────────────────────────────────────────
+            {
+                int pad = (borderW - Tagline.Length) / 2;
+                string inner = new string(' ', Math.Max(0, pad))
+                             + Tagline
+                             + new string(' ', Math.Max(0, borderW - Tagline.Length - pad));
+                Console.ForegroundColor = AccentSecondary;
+                PrintCenteredInBorder("║", inner, "║", ConsoleColor.DarkRed);
+            }
+
+            // ── Bordure basse ─────────────────────────────────────────────────
+            Console.ForegroundColor = AccentSecondary;
+            CenterWrite("╚" + new string('═', borderW) + "╝");
             Console.ResetColor();
 
-            // ── Statusbar ───────────────────────────────────────────────────
+            // ── Status bar ────────────────────────────────────────────────────
             Console.WriteLine();
             PrintStatusBar(version, w);
             Console.WriteLine();
         }
 
-        // ─── SingleChoice ────────────────────────────────────────────────────────────
+        // ─── SingleChoice ─────────────────────────────────────────────────────────────
+        //  Améliorations vs v1 :
+        //    • Numéro de ligne affiché dans chaque option  [1] … [N]
+        //    • Raccourci clavier : taper le chiffre sélectionne directement
+        //    • Indicateur de position  (3 / 7)  en bas à droite de la box
 
         public static int SingleChoice(List<string> options, string? title = null, string version = "")
         {
@@ -225,11 +247,13 @@ namespace Atom.Utils
             int lastW = Console.WindowWidth;
             int lastH = Console.WindowHeight;
 
-            // Largeur interne de la box = option la plus longue + marges
             int maxLabel = 0;
             foreach (var o in options)
                 if (o.Length > maxLabel) maxLabel = o.Length;
-            int boxInner = maxLabel + 8; // "  ▶  label  "
+
+            // largeur interne : "  [N]  label  " + marge
+            int numWidth = options.Count.ToString().Length;
+            int boxInner = maxLabel + numWidth + 12;
 
             void FullDraw()
             {
@@ -244,18 +268,18 @@ namespace Atom.Utils
             }
 
             FullDraw();
-
-            // Ligne vide pour la top-bar de la box
             Console.WriteLine();
             int menuTop = Console.CursorTop;
 
-            // ── DrawRow : redessine UNE ligne ────────────────────────────────
+            // ── DrawRow ───────────────────────────────────────────────────────
             void DrawRow(int index, bool active, int w)
             {
+                string num = (index + 1).ToString().PadLeft(numWidth);
                 string arrow = active ? "▶" : " ";
-                string inner = $"  {arrow}  {options[index]}  ".PadRight(boxInner);
-                int boxLeft = Math.Max(0, (w - boxInner - 2) / 2);
+                string label = options[index];
+                string inner = $"  {arrow} [{num}]  {label}  ".PadRight(boxInner);
 
+                int boxLeft = Math.Max(0, (w - boxInner - 2) / 2);
                 SafeSetCursorPosition(0, menuTop + index);
                 Console.Write(new string(' ', w));
                 SafeSetCursorPosition(boxLeft, menuTop + index);
@@ -280,13 +304,12 @@ namespace Atom.Utils
                 Console.ResetColor();
             }
 
-            // ── DrawBox : top et bottom de la box ────────────────────────────
+            // ── DrawBox ───────────────────────────────────────────────────────
             void DrawBox(int w)
             {
                 int boxLeft = Math.Max(0, (w - boxInner - 2) / 2);
-                string topBar = "┌" + new string('─', boxInner) + "┐";
-                string botBar = "└" + new string('─', boxInner) + "┘";
 
+                // Top
                 int topRow = menuTop - 1;
                 if (topRow >= 0)
                 {
@@ -294,33 +317,45 @@ namespace Atom.Utils
                     Console.Write(new string(' ', w));
                     SafeSetCursorPosition(boxLeft, topRow);
                     Console.ForegroundColor = TextDim;
-                    Console.Write(topBar);
+                    Console.Write("┌" + new string('─', boxInner) + "┐");
                     Console.ResetColor();
                 }
 
+                // Bottom avec indicateur de position
                 int botRow = menuTop + options.Count;
                 SafeSetCursorPosition(0, botRow);
                 Console.Write(new string(' ', w));
                 SafeSetCursorPosition(boxLeft, botRow);
                 Console.ForegroundColor = TextDim;
-                Console.Write(botBar);
+
+                string indicator = $" {sel + 1}/{options.Count} ";
+                int barInner = boxInner - indicator.Length;
+                string leftPart = new string('─', Math.Max(0, barInner));
+                Console.Write("└" + leftPart);
+                Console.ForegroundColor = AccentSecondary;
+                Console.Write(indicator);
+                Console.ForegroundColor = TextDim;
+                Console.Write("┘");
                 Console.ResetColor();
             }
 
-            // ── DrawHint ─────────────────────────────────────────────────────
+            // ── DrawHint ──────────────────────────────────────────────────────
             void DrawHint(int w)
             {
                 int hintRow = menuTop + options.Count + 2;
                 SafeSetCursorPosition(0, hintRow);
                 Console.Write(new string(' ', w));
-                string hint = "↑↓  naviguer     Enter  sélectionner";
+
+                string hint = "↑↓  naviguer    [1-9]  accès direct    Enter  confirmer    Q  quitter";
+                if (hint.Length > w - 4) hint = "↑↓  naviguer    Enter  confirmer    Q  quitter";
+
                 Console.ForegroundColor = TextDim;
                 SafeSetCursorPosition(Math.Max(0, (w - hint.Length) / 2), hintRow);
                 Console.Write(hint);
                 Console.ResetColor();
             }
 
-            // Dessin initial complet
+            // Dessin initial
             int w0 = Console.WindowWidth;
             DrawBox(w0);
             for (int i = 0; i < options.Count; i++) DrawRow(i, i == sel, w0);
@@ -334,11 +369,10 @@ namespace Atom.Utils
                     int w = Console.WindowWidth;
                     int h = Console.WindowHeight;
 
-                    // ── Resize → full redraw ─────────────────────────────────
+                    // Resize → full redraw
                     if (w != lastW || h != lastH)
                     {
-                        lastW = w;
-                        lastH = h;
+                        lastW = w; lastH = h;
                         FullDraw();
                         Console.WriteLine();
                         menuTop = Console.CursorTop;
@@ -347,38 +381,57 @@ namespace Atom.Utils
                         DrawHint(w);
                     }
 
-                    // ── Poll clavier ─────────────────────────────────────────
-                    if (!Console.KeyAvailable)
+                    if (!Console.KeyAvailable) { Thread.Sleep(16); continue; }
+
+                    var info = Console.ReadKey(true);
+                    key = info.Key;
+
+                    int prev = sel;
+
+                    // Accès direct par chiffre
+                    if (info.KeyChar >= '1' && info.KeyChar <= '9')
                     {
-                        Thread.Sleep(16);
+                        int digit = info.KeyChar - '1';
+                        if (digit < options.Count)
+                        {
+                            sel = digit;
+                            if (sel != prev)
+                            {
+                                DrawRow(prev, false, w);
+                                DrawRow(sel, true, w);
+                                DrawBox(w);
+                            }
+                        }
                         continue;
                     }
 
-                    key = Console.ReadKey(true).Key;
-
-                    // ── Navigation : seulement 2 lignes redesssinées ──────────
-                    int prev = sel;
                     switch (key)
                     {
                         case ConsoleKey.UpArrow:
+                        case ConsoleKey.K:
                             sel = sel > 0 ? sel - 1 : options.Count - 1;
                             break;
                         case ConsoleKey.DownArrow:
+                        case ConsoleKey.J:
                             sel = sel < options.Count - 1 ? sel + 1 : 0;
                             break;
+                        case ConsoleKey.Q:
+                            // Quitter proprement → retourne -1
+                            return -1;
                     }
 
                     if (sel != prev)
                     {
                         DrawRow(prev, false, w);
                         DrawRow(sel, true, w);
+                        DrawBox(w); // met à jour l'indicateur de position
                     }
 
                 } while (key != ConsoleKey.Enter);
 
-                // Nettoyer la zone du menu après sélection
+                // Nettoyage zone menu
                 int wFinal = Console.WindowWidth;
-                int clearTo = menuTop + options.Count + 3;
+                int clearTo = menuTop + options.Count + 4;
                 for (int r = menuTop - 1; r <= clearTo; r++)
                 {
                     try { SafeSetCursorPosition(0, r); Console.Write(new string(' ', wFinal)); }
@@ -390,7 +443,7 @@ namespace Atom.Utils
             {
                 Console.Clear();
                 DisplayHeader(version);
-                PrintWarning("Terminal trop petit. Retour au choix par défaut.");
+                PrintWarning("Terminal trop petit — retour au choix par défaut.");
                 return 0;
             }
             finally
@@ -403,7 +456,7 @@ namespace Atom.Utils
             return sel;
         }
 
-        // ─── TransitionEffect ────────────────────────────────────────────────────────
+        // ─── TransitionEffect ─────────────────────────────────────────────────────────
 
         public static void TransitionEffect()
         {
@@ -412,35 +465,37 @@ namespace Atom.Utils
             int height = Console.WindowHeight;
             var rand = new Random();
 
+            // Caractères de "bruit" bruitage ASCII
+            string noise = "▓▒░█▄▀■□▪▫";
             ConsoleColor[] shades = { ConsoleColor.DarkRed, ConsoleColor.Red, ConsoleColor.DarkRed };
-            DateTime end = DateTime.Now.AddMilliseconds(800);
+            DateTime end = DateTime.Now.AddMilliseconds(700);
 
             while (DateTime.Now < end)
             {
                 Console.ForegroundColor = shades[rand.Next(shades.Length)];
-                int count = (width * height) / 15;
+                int count = (width * height) / 12;
                 for (int i = 0; i < count; i++)
                 {
                     SafeSetCursorPosition(rand.Next(width), rand.Next(height));
-                    Console.Write((char)rand.Next(33, 126));
+                    Console.Write(noise[rand.Next(noise.Length)]);
                 }
-                Thread.Sleep(25);
+                Thread.Sleep(20);
             }
 
-            // Sweep clear top-to-bottom
+            // Sweep clear (ligne par ligne)
             Console.ResetColor();
             for (int row = 0; row < height; row++)
             {
                 SafeSetCursorPosition(0, row);
                 Console.Write(new string(' ', width));
-                Thread.Sleep(6);
+                Thread.Sleep(5);
             }
             Console.Clear();
         }
 
         public static void QuickTransition() => Console.Clear();
 
-        // ─── ProgressBar ─────────────────────────────────────────────────────────────
+        // ─── ProgressBar ──────────────────────────────────────────────────────────────
 
         public static void DrawProgressBar(int pct, int barWidth = 40, string? label = null)
         {
@@ -449,12 +504,13 @@ namespace Atom.Utils
 
             Console.CursorLeft = 0;
             Console.ForegroundColor = TextDim;
-            Console.Write("  [");
+            Console.Write("  ▕");
             Console.ForegroundColor = AccentPrimary;
             Console.Write(new string('█', filled));
+            Console.ForegroundColor = AccentSecondary;
+            Console.Write(new string('▒', barWidth - filled));
             Console.ForegroundColor = TextDim;
-            Console.Write(new string('░', barWidth - filled));
-            Console.Write("] ");
+            Console.Write("▏ ");
             Console.ForegroundColor = TextBright;
             Console.Write($"{pct,3}%");
 
@@ -468,15 +524,60 @@ namespace Atom.Utils
             if (pct >= 100) Console.WriteLine();
         }
 
-        // ─── Private helpers ─────────────────────────────────────────────────────────
+        // ─── Spinner ──────────────────────────────────────────────────────────────────
+        //  Nouveau : spinner animé pour les opérations asynchrones
+        //  Usage :
+        //    var cts = new CancellationTokenSource();
+        //    var spin = Task.Run(() => UIHelper.Spinner("Chargement", cts.Token));
+        //    // ... travail ...
+        //    cts.Cancel(); await spin;
+
+        public static void Spinner(string label, CancellationToken ct)
+        {
+            char[] frames = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' };
+            int idx = 0;
+
+            bool savedVisible = true;
+            if (OperatingSystem.IsWindows())
+            {
+                savedVisible = Console.CursorVisible;
+                Console.CursorVisible = false;
+            }
+
+            try
+            {
+                while (!ct.IsCancellationRequested)
+                {
+                    Console.CursorLeft = 0;
+                    Console.ForegroundColor = AccentPrimary;
+                    Console.Write($"  {frames[idx % frames.Length]} ");
+                    Console.ForegroundColor = TextMuted;
+                    Console.Write(label + "   ");
+                    Console.ResetColor();
+                    idx++;
+                    Thread.Sleep(80);
+                }
+            }
+            finally
+            {
+                Console.CursorLeft = 0;
+                Console.Write(new string(' ', label.Length + 8));
+                Console.CursorLeft = 0;
+                if (OperatingSystem.IsWindows())
+                    Console.CursorVisible = savedVisible;
+                Console.ResetColor();
+            }
+        }
+
+        // ─── Private helpers ──────────────────────────────────────────────────────────
 
         private static void SafeSetCursorPosition(int left, int top)
         {
             try
             {
-                int maxLeft = Console.WindowWidth - 1;
-                int maxTop = Console.WindowHeight - 1;
-                Console.SetCursorPosition(Math.Clamp(left, 0, maxLeft), Math.Clamp(top, 0, maxTop));
+                Console.SetCursorPosition(
+                    Math.Clamp(left, 0, Console.WindowWidth - 1),
+                    Math.Clamp(top, 0, Console.WindowHeight - 1));
             }
             catch { }
         }
@@ -488,9 +589,26 @@ namespace Atom.Utils
             Console.WriteLine(text);
         }
 
+        /// <summary>Affiche une ligne encadrée de deux bornes, avec couleur centrale.</summary>
+        private static void PrintCenteredInBorder(string left, string content, string right, ConsoleColor contentColor)
+        {
+            int w = Console.WindowWidth;
+            int total = left.Length + content.Length + right.Length;
+            int offset = Math.Max(0, (w - total) / 2);
+
+            SafeSetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(' ', offset));
+            Console.ForegroundColor = AccentSecondary;
+            Console.Write(left);
+            Console.ForegroundColor = contentColor;
+            Console.Write(content);
+            Console.ForegroundColor = AccentSecondary;
+            Console.WriteLine(right);
+        }
+
         /// <summary>
-        /// Barre d'infos système sous le header :
-        ///   ┌─ WIN32 · ATOM v1.0.3 · username · 2026-05-17 ─┐
+        /// Barre d'état système sous le header :
+        ///   ┌─ LINUX · ATOM v2.0.0 · user · 2026-05-19 ─────────────┐
         /// </summary>
         private static void PrintStatusBar(string version, int w)
         {
@@ -500,13 +618,13 @@ namespace Atom.Utils
             string ver = string.IsNullOrEmpty(version) ? "ATOM" : $"ATOM v{version}";
             string user = Environment.UserName.ToLower();
             string date = DateTime.Now.ToString("yyyy-MM-dd");
-            string content = $"  {os}  ·  {ver}  ·  {user}  ·  {date}  ";
+            string time = DateTime.Now.ToString("HH:mm");
+            string content = $"  {os}  ·  {ver}  ·  {user}  ·  {date}  ·  {time}  ";
 
-            int barW = Math.Min(w - 4, Math.Max(content.Length + 4, 48));
+            int barW = Math.Min(w - 4, Math.Max(content.Length + 4, 52));
             int left = Math.Max(0, (w - barW) / 2);
             int inner = barW - 2;
 
-            // Centre le texte dans la barre
             int pad = Math.Max(0, (inner - content.Length) / 2);
             string paddedContent = content.PadLeft(pad + content.Length).PadRight(inner);
 
@@ -526,6 +644,13 @@ namespace Atom.Utils
             Console.ForegroundColor = TextDim;
             Console.WriteLine("└" + new string('─', inner) + "┘");
             Console.ResetColor();
+        }
+
+        /// <summary>Enumerate avec index — remplace LINQ pour éviter la dépendance.</summary>
+        private static IEnumerable<(T item, int index)> IndexedLines<T>(IEnumerable<T> source)
+        {
+            int i = 0;
+            foreach (var item in source) yield return (item, i++);
         }
     }
 }
