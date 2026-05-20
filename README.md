@@ -1,63 +1,72 @@
-# ATOM - Discord & System Management Suite
+<p align="center">
+  <img src="preview.png" alt="ATOM Banner" width="600">
+</p>
 
-ATOM is a comprehensive management and automation tool built in C# for the Windows platform. It provides a robust set of features for Discord account administration, webhook management, and system-level utilities through a high-performance console interface.
+<h1 align="center">⚛️ ATOM - Ultimate Multi-Tool ⚛️</h1>
 
-## Core Features
+<p align="center">
+  <strong>The most powerful Discord, OSINT, and System management suite built with .NET 10.</strong>
+</p>
 
-### Discord Account Administration
-*   **Profile Management**: Synchronous update of biography, username (password-validated), and pronouns.
-*   **Presence Control**: Granular control over custom status text and presence states (Online, Idle, DND, Invisible).
-*   **Status Rotation**: Automated sequential status updates with customizable intervals.
-*   **Security Analysis**: Detailed token verification including Nitro status, badge identification, and payment method checking.
-*   **Social & Guild Cleanup**: 
-    *   Bulk server exit or deletion (owner-specific).
-    *   Relationship management (Bulk friend removal/blocking).
-    *   Automated DM channel closure.
-*   **Mass Communication**: Direct messaging capabilities across all open conversations.
-*   **Account Reset (Nuke)**: Full-scale account cleaning protocol involving server, friend, and settings reset.
+<p align="center">
+  <img src="https://img.shields.io/badge/Version-1.0.0-blueviolet?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Language-C%23-green?style=for-the-badge" alt="Language">
+  <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge" alt="Platform">
+</p>
 
-### Webhook Management
-*   **Diagnostic Tools**: Real-time validity checking and metadata extraction.
-*   **Automated Deployment**: Multi-threaded webhook creation and high-frequency messaging (Spam) modules.
-*   **Cleanup**: Secure deletion of existing webhooks via Discord API.
+---
 
-### System Utilities
-*   **Memory Injection**: Low-level DLL injector with Unicode and x64 support.
-*   **Network Identification**: MAC address spoofing and HWID retrieval.
-*   **Security Maintenance**: Detection and removal of common Discord client injections.
-*   **System Optimization**: Automated temporary file and crash dump cleanup.
+## 🛠️ Tool Suite Overview
 
-### Network & Data Tools
-*   **Geolocation**: Detailed IP address lookup and analysis.
-*   **Identity Simulation**: Generator for identity, card, and token data.
-*   **Data Serialization**: QR code generation and token formatting/sorting utilities.
+The **ATOM** engine is powered by a modular service architecture. Here is a breakdown of the specialized modules available in our toolkit:
 
-## Technical Specifications
-*   **Framework**: .NET 10.0
-*   **Language**: C# 13.0
-*   **Architecture**: Service-oriented console application
-*   **Security**: Cloudflare-compliant headers and rate-limit aware request handling.
+### 🛡️ Security & Privacy
+*   **Mac Spoofer**: Change your physical MAC address to bypass hardware bans.
+*   **Security Guard**: Detects and removes malicious Discord client injections (BetterDiscord, Vencord, etc. if compromised).
+*   **Obfuscator**: Advanced code protection for C#, Python, and JavaScript.
+*   **Proxy Manager**: Integrated proxy scraping and validation system.
 
-## Installation and Setup
+### 🎮 Discord Advanced
+*   **Token Master**: Detailed account analysis (Nitro, Badges, Payment, Billing).
+*   **Nuke Engine**: Full account reset (Server wipe, Friend removal, Settings reset).
+*   **Mass DM**: High-speed direct messaging across all active conversations.
+*   **Webhook Tool**: Webhook diagnostic, multi-threaded spammer, and secure deletion.
+*   **Cleaner**: Automated guild exit, DM closure, and relationship cleanup.
 
-### Prerequisites
-*   Windows 10/11
-*   [.NET 10.0 Runtime or SDK](https://dotnet.microsoft.com/download)
+### 🔍 OSINT & Networking
+*   **Network Intelligence**: IP Geolocation, HWID retrieval, and connection analysis.
+*   **QR Generator**: Create secure QR codes for tokens or custom data.
 
-### Build Instructions
-```powershell
+### ⚙️ System & Development
+*   **DLL Injector**: Low-level x64 memory injector for process manipulation.
+*   **Identity Faker**: Generates realistic fake identities, credit cards, and addresses.
+*   **System Optimizer**: Deep clean of temporary files and crash logs.
+
+---
+
+## 🚀 Getting Started
+
+### 📋 Prerequisites
+- Windows 10/11
+- [.NET 10.0 Runtime](https://dotnet.microsoft.com/download)
+
+### 🛠️ Installation
+```bash
 # Clone the repository
 git clone https://github.com/Redwxll-atm/Tools.git
 
-# Navigate to the project directory
+# Enter the directory
 cd Tools
 
 # Build the project
-dotnet build --configuration Release
+dotnet build -c Release
 ```
 
-## Legal Disclaimer
-This software is provided for educational and security research purposes only. The author is not responsible for any misuse or violations of the Discord Terms of Service. Users are responsible for their own actions and should ensure compliance with local laws and platform regulations.
+## 📜 Legal Notice
+This software is intended for **educational purposes only**. The developer is not responsible for any misuse. Please use responsibly and respect the Discord Terms of Service.
 
 ---
-**Project maintained by Redwxll**
+
+<p align="center">
+  <i>Developed with ❤️ by <b>Redwxll</b></i>
+</p>

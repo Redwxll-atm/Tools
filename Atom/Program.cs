@@ -197,7 +197,6 @@ namespace Atom
             UIHelper.DisplayHeader();
             var options = new List<string> 
             { 
-                "OSINT Lookup",
                 "Avatar Scraper",
                 "IP Lookup", 
                 "Faker Tools (Identity/Card/Token)",
@@ -209,14 +208,13 @@ namespace Atom
             UIHelper.TransitionEffect();
             switch (choice)
             {
-                case 0: await SherlockService.HandleSherlockMenu(); break;
-                case 1: await DiscordService.HandleAvatarScraper(); break;
-                case 2: await NetworkService.HandleIpLookup(); break;
-                case 3: FakerService.HandleFakerMenu(); break;
-                case 4: QrCodeService.HandleQrCodeGenerator(); break;
-                case 5: Console.WriteLine("[*] YouTube Converter: Option bientôt disponible..."); break;
+                case 0: await DiscordService.HandleAvatarScraper(); break;
+                case 1: await NetworkService.HandleIpLookup(); break;
+                case 2: FakerService.HandleFakerMenu(); break;
+                case 3: QrCodeService.HandleQrCodeGenerator(); break;
+                case 4: Console.WriteLine("[*] YouTube Converter: Option bientôt disponible..."); break;
             }
-            if (choice != 6) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
+            if (choice != 5) { Console.WriteLine("\nAppuyez sur une touche..."); Console.ReadKey(); }
         }
     }
 }
